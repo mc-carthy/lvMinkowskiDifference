@@ -12,10 +12,10 @@ boxB.x = love.graphics.getWidth() / 2 - boxB.size / 2
 boxB.y = love.graphics.getHeight() / 2 - boxB.size / 2
 boxB.w, boxB.h = boxB.size, boxB.size
 boxB.speed = 100
-boxB.mass = 1000
+boxB.mass = 100
 
 function love.load()
-
+    mx, my = 0, 0
 end
 
 function love.update(dt)
@@ -56,11 +56,10 @@ function love.update(dt)
     calculateMinkowskiRect(boxA, boxB)
 
     if pointInRect({ x = 0, y = 0}, minkowskiBox) then
-        local mx, my = calculateMinkowskiResolution()
-        boxA.x = boxA.x - mx * (boxA.mass / (boxA.mass + boxB.mass))
-        boxA.y = boxA.y - my * (boxA.mass / (boxA.mass + boxB.mass))
-        boxB.x = boxB.x + mx * (boxB.mass / (boxA.mass + boxB.mass))
-        boxB.y = boxB.y + my * (boxB.mass / (boxA.mass + boxB.mass))
+        mx, my = calculateMinkowskiResolution()
+        resolveCollisions()
+    else
+        mx, my = 0, 0
     end
 end
 
@@ -73,6 +72,8 @@ function love.draw()
     love.graphics.rectangle('line', minkowskiBox.x, minkowskiBox.y, minkowskiBox.w, minkowskiBox.h)
     love.graphics.rectangle('line', boxB.x, boxB.y, boxB.size, boxB.size)
     love.graphics.rectangle('line', boxA.x, boxA.y, boxA.size, boxA.size)
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.print('Minkowski penetration vector\nx: ' .. string.format("%.2f", mx) .. '\ny: ' .. string.format("%.2f", my), 10, 10)
 end
 
 function love.keypressed(key)
@@ -101,6 +102,13 @@ function calculateMinkowskiResolution()
     else
         return 0, minY
     end
+end
+
+function resolveCollisions()
+    boxA.x = boxA.x - mx * (boxA.mass / (boxA.mass + boxB.mass))
+    boxA.y = boxA.y - my * (boxA.mass / (boxA.mass + boxB.mass))
+    boxB.x = boxB.x + mx * (boxB.mass / (boxA.mass + boxB.mass))
+    boxB.y = boxB.y + my * (boxB.mass / (boxA.mass + boxB.mass))
 end
 
 function pointInRect(point, rect)
