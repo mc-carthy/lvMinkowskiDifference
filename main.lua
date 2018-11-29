@@ -1,48 +1,64 @@
-keyboardBox = {}
-keyboardBox.size = 100
-keyboardBox.x = love.graphics.getWidth() / 2 - keyboardBox.size / 2
-keyboardBox.y = love.graphics.getHeight() / 2 - keyboardBox.size / 2
-keyboardBox.w, keyboardBox.h = keyboardBox.size, keyboardBox.size
-keyboardBox.speed = 100
+boxA = {}
+boxA.size = 100
+boxA.x = love.graphics.getWidth() / 2 - boxA.size / 2
+boxA.y = love.graphics.getHeight() / 2 - boxA.size / 2
+boxA.w, boxA.h = boxA.size, boxA.size
+boxA.speed = 100
 
-mouseBox = {}
-mouseBox.size = 100
-mouseBox.x = love.graphics.getWidth() / 2 - mouseBox.size / 2
-mouseBox.y = love.graphics.getHeight() / 2 - mouseBox.size / 2
-mouseBox.w, mouseBox.h = mouseBox.size, mouseBox.size
-mouseBox.speed = 100
+boxB = {}
+boxB.size = 100
+boxB.x = love.graphics.getWidth() / 2 - boxB.size / 2
+boxB.y = love.graphics.getHeight() / 2 - boxB.size / 2
+boxB.w, boxB.h = boxB.size, boxB.size
+boxB.speed = 100
 
 function love.load()
 
 end
 
 function love.update(dt)
-    local mouseX, mouseY = love.mouse.getPosition()
-    mouseBox.x, mouseBox.y = mouseX - mouseBox.size / 2, mouseY - mouseBox.size / 2
-
     local dx, dy = 0, 0
-    if love.keyboard.isDown('a') or love.keyboard.isDown('left') then
-        dx = dx - keyboardBox.speed * dt
+    if love.keyboard.isDown('left') then
+        dx = dx - boxA.speed * dt
     end
-    if love.keyboard.isDown('d') or love.keyboard.isDown('right') then
-        dx = dx + keyboardBox.speed * dt
+    if love.keyboard.isDown('right') then
+        dx = dx + boxA.speed * dt
     end
-    if love.keyboard.isDown('w') or love.keyboard.isDown('up') then
-        dy = dy - keyboardBox.speed * dt
+    if love.keyboard.isDown('up') then
+        dy = dy - boxA.speed * dt
     end
-    if love.keyboard.isDown('s') or love.keyboard.isDown('down') then
-        dy = dy + keyboardBox.speed * dt
+    if love.keyboard.isDown('down') then
+        dy = dy + boxA.speed * dt
     end
 
-    keyboardBox.x = keyboardBox.x + dx
-    keyboardBox.y = keyboardBox.y + dy
+    boxA.x = boxA.x + dx
+    boxA.y = boxA.y + dy
 
-    calculateMinkowskiRect(mouseBox, keyboardBox)
+    dx, dy = 0, 0
+    if love.keyboard.isDown('a') then
+        dx = dx - boxB.speed * dt
+    end
+    if love.keyboard.isDown('d') then
+        dx = dx + boxB.speed * dt
+    end
+    if love.keyboard.isDown('w') then
+        dy = dy - boxB.speed * dt
+    end
+    if love.keyboard.isDown('s') then
+        dy = dy + boxB.speed * dt
+    end
+
+    boxB.x = boxB.x + dx
+    boxB.y = boxB.y + dy
+
+    calculateMinkowskiRect(boxA, boxB)
 
     if pointInRect({ x = 0, y = 0}, minkowskiBox) then
-        local dx, dy = calculateMinkowskiResolution()
-        keyboardBox.x = keyboardBox.x + dx
-        keyboardBox.y = keyboardBox.y + dy
+        local mx, my = calculateMinkowskiResolution()
+        boxA.x = boxA.x - mx * 0.5
+        boxA.y = boxA.y - my * 0.5
+        boxB.x = boxB.x + mx * 0.5
+        boxB.y = boxB.y + my * 0.5
     end
 end
 
@@ -50,11 +66,11 @@ function love.draw()
     if pointInRect({ x = 0, y = 0}, minkowskiBox) then
         love.graphics.setColor(1, 0, 0, 1)
     else
-        love.graphics.setColor(1, 1, 1, 1)
+        love.graphics.setColor(0, 1, 0, 1)
     end
     love.graphics.rectangle('line', minkowskiBox.x, minkowskiBox.y, minkowskiBox.w, minkowskiBox.h)
-    love.graphics.rectangle('line', mouseBox.x, mouseBox.y, mouseBox.size, mouseBox.size)
-    love.graphics.rectangle('line', keyboardBox.x, keyboardBox.y, keyboardBox.size, keyboardBox.size)
+    love.graphics.rectangle('line', boxB.x, boxB.y, boxB.size, boxB.size)
+    love.graphics.rectangle('line', boxA.x, boxA.y, boxA.size, boxA.size)
 end
 
 function love.keypressed(key)
