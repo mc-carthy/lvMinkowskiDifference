@@ -15,7 +15,8 @@ function love.load()
 end
 
 function love.update(dt)
-    mouseBox.x, mouseBox.y = love.mouse.getPosition()
+    local mouseX, mouseY = love.mouse.getPosition()
+    mouseBox.x, mouseBox.y = mouseX - mouseBox.size / 2, mouseY - mouseBox.size / 2
 
     local dx, dy = 0, 0
     if love.keyboard.isDown('a') or love.keyboard.isDown('left') then
@@ -36,7 +37,7 @@ function love.update(dt)
 end
 
 function love.draw()
-    love.graphics.rectangle('line', mouseBox.x - mouseBox.size / 2, mouseBox.y - mouseBox.size / 2, mouseBox.size, mouseBox.size)
+    love.graphics.rectangle('line', mouseBox.x, mouseBox.y, mouseBox.size, mouseBox.size)
     love.graphics.rectangle('line', keyboardBox.x, keyboardBox.y, keyboardBox.size, keyboardBox.size)
 end
 
