@@ -4,6 +4,7 @@ boxA.x = love.graphics.getWidth() / 2 - boxA.size / 2
 boxA.y = love.graphics.getHeight() / 2 - boxA.size / 2
 boxA.w, boxA.h = boxA.size, boxA.size
 boxA.speed = 100
+boxA.mass = 100
 
 boxB = {}
 boxB.size = 100
@@ -11,6 +12,7 @@ boxB.x = love.graphics.getWidth() / 2 - boxB.size / 2
 boxB.y = love.graphics.getHeight() / 2 - boxB.size / 2
 boxB.w, boxB.h = boxB.size, boxB.size
 boxB.speed = 100
+boxB.mass = 1000
 
 function love.load()
 
@@ -55,10 +57,10 @@ function love.update(dt)
 
     if pointInRect({ x = 0, y = 0}, minkowskiBox) then
         local mx, my = calculateMinkowskiResolution()
-        boxA.x = boxA.x - mx * 0.5
-        boxA.y = boxA.y - my * 0.5
-        boxB.x = boxB.x + mx * 0.5
-        boxB.y = boxB.y + my * 0.5
+        boxA.x = boxA.x - mx * (boxA.mass / (boxA.mass + boxB.mass))
+        boxA.y = boxA.y - my * (boxA.mass / (boxA.mass + boxB.mass))
+        boxB.x = boxB.x + mx * (boxB.mass / (boxA.mass + boxB.mass))
+        boxB.y = boxB.y + my * (boxB.mass / (boxA.mass + boxB.mass))
     end
 end
 
