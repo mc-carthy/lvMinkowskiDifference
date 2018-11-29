@@ -41,11 +41,13 @@ function love.update(dt)
 end
 
 function love.draw()
-    love.graphics.setColor(1, 0, 0, 1)
+    if pointInRect({ x = 0, y = 0}, minkowskiBox) then
+        love.graphics.setColor(1, 1, 1, 1)
+    else
+        love.graphics.setColor(1, 0, 0, 1)
+    end
     love.graphics.rectangle('line', minkowskiBox.x, minkowskiBox.y, minkowskiBox.w, minkowskiBox.h)
-    love.graphics.setColor(0, 1, 0, 1)
     love.graphics.rectangle('line', mouseBox.x, mouseBox.y, mouseBox.size, mouseBox.size)
-    love.graphics.setColor(0, 0, 1, 1)
     love.graphics.rectangle('line', keyboardBox.x, keyboardBox.y, keyboardBox.size, keyboardBox.size)
 end
 
@@ -61,4 +63,11 @@ function calculateMinkowskiRect(boxA, boxB)
     minkowskiBox.y = boxA.y - boxB.y - boxB.h
     minkowskiBox.w = boxA.w + boxB.w
     minkowskiBox.h = boxA.h + boxB.h
+end
+
+function pointInRect(point, rect)
+    return (
+        point.x > rect.x and point.x < rect.x + rect.w and
+        point.y > rect.y and point.y < rect.y + rect.h
+    )
 end
