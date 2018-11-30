@@ -14,6 +14,8 @@ boxB.w, boxB.h = boxB.size, boxB.size
 boxB.speed = 100
 boxB.mass = 100
 
+collisionOn = true
+
 function love.load()
     mx, my = 0, 0
 end
@@ -57,7 +59,9 @@ function love.update(dt)
 
     if pointInRect({ x = 0, y = 0}, minkowskiBox) then
         mx, my = calculateMinkowskiResolution()
-        resolveCollisions()
+        if collisionOn then
+            resolveCollisions()
+        end
     else
         mx, my = 0, 0
     end
@@ -73,12 +77,16 @@ function love.draw()
     love.graphics.rectangle('line', boxB.x, boxB.y, boxB.size, boxB.size)
     love.graphics.rectangle('line', boxA.x, boxA.y, boxA.size, boxA.size)
     love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.print('Minkowski penetration vector\nx: ' .. string.format("%.2f", mx) .. '\ny: ' .. string.format("%.2f", my), 10, 10)
+    love.graphics.print('Collision resolution: ' .. string.format("%s", collisionOn), 10, 10)
+    love.graphics.print('Minkowski penetration vector\nx: ' .. string.format("%.2f", mx) .. '\ny: ' .. string.format("%.2f", my), 10, 30)
 end
 
 function love.keypressed(key)
     if key == 'escape' then
         love.event.quit()
+    end
+    if key == 'space' then
+        collisionOn = not collisionOn
     end
 end
 
